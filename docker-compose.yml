@@ -1,0 +1,49 @@
+version: '2'
+
+services:
+  mariadb:
+    image: mariadb
+    restart: always
+    expose:
+     - 3306
+    volumes:
+     - "./mariadb/:/var/lib/mysql"
+    environment:
+     - MYSQL_ROOT_PASSWORD=toor
+     - MYSQL_DATABASE=wordpress
+
+  php-fpm:
+#    build:
+#      context: php-fpm
+#      dockerfile: Dockerfile
+    image: olky/php-wordpress:7-fpm
+    restart: always
+    expose:
+      - 9000
+    volumes_from:
+      - storage
+    links:
+      - mariadb
+
+  nginx:
+    build:
+      context: nginx
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8000:80"
+    volumes_from:
+      - storage
+    links:
+      - php-fpm:php-fpm
+    depends_on:
+      - php-fpm
+    
+
+  storage:
+    image: alpine
+    volumes:
+      - ./code:/var/www/html/
+    command: "/bin/true"
+
+
