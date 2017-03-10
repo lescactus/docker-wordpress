@@ -13,10 +13,9 @@ services:
      - MYSQL_DATABASE=wordpress
 
   php-fpm:
-#    build:
-#      context: php-fpm
-#      dockerfile: Dockerfile
-    image: olky/php-wordpress:7-fpm
+    build:
+      context: php-fpm
+      dockerfile: Dockerfile
     restart: always
     expose:
       - 9000
